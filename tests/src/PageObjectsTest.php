@@ -227,4 +227,20 @@ class PageObjectsTest extends TestCase {
     $this->about->checkboxNotChecked('@checkbox');
   }
 
+  /**
+   * Test you can use normal element method with items in the field map.
+   */
+  public function testFindWithItemFromFieldMap() {
+    $element = $this->about->find('@checkbox');
+    $this->assertNotNull($element);
+  }
+
+  /**
+   * Test you warned correctly for using elements in field-specific methods.
+   */
+  public function testFieldValueWithItemFromElementMap() {
+    $this->about->fieldValueNotEquals('@pageTitle', 'foo');
+    $this->expectExceptionMessage('You cannot use an element defined in ::getElementMap in a method that expects an item defined in ::getFieldElementMap.');
+  }
+
 }
