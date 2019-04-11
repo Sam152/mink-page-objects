@@ -3,14 +3,18 @@
 namespace PhpPageObjects;
 
 use PhpPageObjects\Proxy\PageAssertProxyInterface;
-use PhpPageObjects\Proxy\PageDriverProxyInterface;
-use PhpPageObjects\Proxy\PageSessionProxyInterface;
+use PhpPageObjects\Proxy\PageDocumentElementProxyInterface;
 
-/**
- *
- */
-interface PageObjectInterface extends PageAssertProxyInterface, PageDriverProxyInterface, PageSessionProxyInterface {
+interface PageObjectInterface extends PageAssertProxyInterface, PageDocumentElementProxyInterface {
 
+  /**
+   * @return $this
+   */
   public function visit();
+
+  /**
+   * @return $this
+   */
+  public function getUrl();
 
 }

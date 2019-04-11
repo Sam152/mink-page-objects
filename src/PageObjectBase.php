@@ -5,14 +5,14 @@ namespace PhpPageObjects;
 use Behat\Mink\Session;
 use Behat\Mink\WebAssert;
 
-class PageObjectBase implements PageObjectInterface {
+abstract class PageObjectBase implements PageObjectInterface {
 
   /**
    * The page element map.
    *
    * @var array
    */
-  protected $elementMap;
+  protected $elementMap = [];
 
   /**
    * The URL of the page.
@@ -36,50 +36,152 @@ class PageObjectBase implements PageObjectInterface {
     $this->assert = $assert;
   }
 
-  protected function getSession() {
-    return $this->session;
-  }
-
-  protected function assertSession() {
-    return $this->assert;
+  /**
+   * {@inheritdoc}
+   */
+  public function visit() {
+    $this->getSession()->visit($this->getUrl());
   }
 
   /**
-   * Transform a locator.
-   *
-   * @param string $locator
-   *   The locator to transform.
-   *
-   * @return string
-   *   A locator, resolved from the element map if applicable.
+   * {@inheritdoc}
    */
-//  public function locate(string $locator) {
-//
-//    if (substr($locator, 0, 1) === '@') {
-//      $element_map = $this->getElementMap();
-//      $map_key = substr($locator, 1);
-//      if (!isset($element_map[$map_key])) {
-//        throw new \InvalidArgumentException(sprintf('Could not find the locator "%s" in the element map.', $locator));
-//      }
-//      return $element_map[$map_key];
-//    }
-//    return $locator;
-//  }
-
-  public function getElementMap() {
-    return $this->elementMap;
-  }
-
   public function getUrl() {
     return $this->pageUrl;
   }
 
   /**
-   * {@inheritdoc}
-   * @return $this
+   * Get the session associated with the given page.
+   *
+   * @return \Behat\Mink\Session
    */
-  public function visit($url = NULL) {
-    $this->session->visit($url ? $url : $this->getUrl());
+  protected function getSession() {
+    return $this->session;
+  }
+
+  /**
+   * Get the web assertion.
+   *
+   * @return \Behat\Mink\WebAssert
+   *   The web assertion.
+   */
+  protected function assertSession() {
+    return $this->assert;
+  }
+
+  /**
+   * Get the document of the current page.
+   *
+   * @return \Behat\Mink\Element\DocumentElement
+   *   The document.
+   */
+  protected function getDocument() {
+    return $this->getSession()->getPage();
+  }
+
+  /**
+   * Get the map of elements created for this page.
+   *
+   * @return array
+   *   The map of elements created for this page.
+   */
+  protected function getElementMap() {
+    return $this->elementMap;
+  }
+
+  /**
+   * Resolve an element into a selector.
+   *
+   * @param string $element
+   *   The page element.
+   *
+   * @return string
+   *   The associated selector.
+   */
+  protected function resolveElementSelector($element) {
+    if (substr($element, 0, 1) === '@') {
+      $element_map = $this->getElementMap();
+      $map_key = substr($element, 1);
+      if (!isset($element_map[$map_key])) {
+        throw new \InvalidArgumentException(sprintf('Could not find the locator "%s" in the element map.', $locator));
+      }
+      return $element_map[$map_key];
+    }
+    return $element;
+  }
+
+  /**
+   * Resolve an element into a locator.
+   *
+   * @param string $element
+   *   The page element.
+   *
+   * @return string
+   *   The associated locator.
+   */
+  protected function resolveElementLocator($element) {
+    return 'css';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function has($selector, $locator) {
+    return $this->getDocument()->has($selector, $locator);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isValid() {
+    return $this->getDocument()->isValid();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function waitFor($timeout, $callback) {
+    return $this->getDocument()->waitFor($timeout, $callback);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function find($selector, $locator) {
+    return $this->getDocument()->find($selector, $locator);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function findAll($selector, $locator) {
+    return $this->getDocument()->findAll($selector, $locator);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getText() {
+    return $this->getDocument()->getText();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getHtml() {
+    return $this->getDocument()->getHtml();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementContains($pageElement, $html) {
+    $this->assert->elementContains(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement),
+      $html
+    );
+    return $this;
   }
 
 }
