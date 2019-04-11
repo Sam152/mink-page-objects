@@ -1,0 +1,20 @@
+{
+    "name": "sam152/php-page-objects",
+    "description": "Generic page objects for phpunit.",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Sam",
+            "email": "sam@1485048.no-reply.drupal.org"
+        }
+    ],
+    "require": {
+        "behat/mink": "1.7.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpPageObjects\\": "src/",
+            "PhpPageObjects\\Tests\\": "tests/src"
+        }
+    }
+}
