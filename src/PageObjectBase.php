@@ -2,24 +2,17 @@
 
 namespace PhpPageObjects;
 
+use Behat\Mink\Element\ElementInterface;
+use Behat\Mink\Element\TraversableElement;
 use Behat\Mink\Session;
 use Behat\Mink\WebAssert;
 
 abstract class PageObjectBase implements PageObjectInterface {
 
   /**
-   * The page element map.
-   *
-   * @var array
+   * The locator default.
    */
-  protected $elementMap = [];
-
-  /**
-   * The URL of the page.
-   *
-   * @var string
-   */
-  protected $pageUrl;
+  const LOCATOR_DEFAULT = 'css';
 
   /**
    * @var \Behat\Mink\Session
@@ -39,15 +32,33 @@ abstract class PageObjectBase implements PageObjectInterface {
   /**
    * {@inheritdoc}
    */
-  public function visit() {
-    $this->getSession()->visit($this->getUrl());
+  abstract public function getUrl();
+
+  /**
+   * Get an element map for the current page.
+   *
+   * @return array
+   *   An element map.
+   */
+  protected function getElementMap() {
+    return [];
+  }
+
+  /**
+   * Get a field element map for the current page.
+   *
+   * @return array
+   *   A field element map.
+   */
+  protected function getFieldElementMap() {
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getUrl() {
-    return $this->pageUrl;
+  public function visit() {
+    $this->getSession()->visit($this->getUrl());
   }
 
   /**
@@ -80,13 +91,43 @@ abstract class PageObjectBase implements PageObjectInterface {
   }
 
   /**
-   * Get the map of elements created for this page.
+   * @param string $element
+   *   The element to resolve.
    *
-   * @return array
-   *   The map of elements created for this page.
+   * @return mixed
+   *   The matching item from the element map.
    */
-  protected function getElementMap() {
-    return $this->elementMap;
+  private function getElementFromMap($element) {
+    if (substr($element, 0, 1) === '@') {
+      $element_map = $this->getElementMap();
+      $map_key = substr($element, 1);
+      if (!isset($element_map[$map_key])) {
+        throw new \InvalidArgumentException(sprintf('Could not find the element "%s" in the element map.', $element));
+      }
+      return $element_map[$map_key];
+    }
+    throw new \InvalidArgumentException(sprintf('Could not find the element "%s" in the element map.', $element));
+  }
+
+  /**
+   * Get a field element from the map.
+   *
+   * @param string $fieldElement
+   *   The element to resolve.
+   *
+   * @return mixed
+   *   The matching item from the element map.
+   */
+  private function getFieldElementFromMap($fieldElement) {
+    if (substr($fieldElement, 0, 1) === '@') {
+      $map = $this->getFieldElementMap();
+      $map_key = substr($fieldElement, 1);
+      if (!isset($map[$map_key])) {
+        throw new \InvalidArgumentException(sprintf('Could not find the field element "%s" in the element map.', $fieldElement));
+      }
+      return $map[$map_key];
+    }
+    throw new \InvalidArgumentException(sprintf('Could not find the field element "%s" in the element map.', $fieldElement));
   }
 
   /**
@@ -99,15 +140,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    *   The associated selector.
    */
   protected function resolveElementSelector($element) {
-    if (substr($element, 0, 1) === '@') {
-      $element_map = $this->getElementMap();
-      $map_key = substr($element, 1);
-      if (!isset($element_map[$map_key])) {
-        throw new \InvalidArgumentException(sprintf('Could not find the locator "%s" in the element map.', $locator));
-      }
-      return $element_map[$map_key];
-    }
-    return $element;
+    $item = $this->getElementFromMap($element);
+    return is_array($item) ? $item[1] : $item;
   }
 
   /**
@@ -120,66 +154,73 @@ abstract class PageObjectBase implements PageObjectInterface {
    *   The associated locator.
    */
   protected function resolveElementLocator($element) {
-    return 'css';
+    $item = $this->getElementFromMap($element);
+    return is_array($item) ? $item[0] : static::LOCATOR_DEFAULT;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function has($selector, $locator) {
-    return $this->getDocument()->has($selector, $locator);
+  public function has($pageElement) {
+    return $this->getDocument()->has(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement)
+    );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isValid() {
-    return $this->getDocument()->isValid();
+  public function find($pageElement) {
+    return $this->getDocument()->find(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement)
+    );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function waitFor($timeout, $callback) {
-    return $this->getDocument()->waitFor($timeout, $callback);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function find($selector, $locator) {
-    return $this->getDocument()->find($selector, $locator);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function findAll($selector, $locator) {
-    return $this->getDocument()->findAll($selector, $locator);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getText() {
-    return $this->getDocument()->getText();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getHtml() {
-    return $this->getDocument()->getHtml();
+  public function findAll($pageElement) {
+    return $this->getDocument()->findAll(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement)
+    );
   }
 
   /**
    * {@inheritdoc}
    */
   public function elementContains($pageElement, $html) {
-    $this->assert->elementContains(
+    $this->assertSession()->elementContains(
       $this->resolveElementLocator($pageElement),
       $this->resolveElementSelector($pageElement),
       $html
+    );
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementsCount($pageElement, $count, ElementInterface $container = NULL) {
+    $this->assertSession()->elementsCount(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement),
+      $count,
+      $container
+    );
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fieldValueEquals($fieldElement, $value, TraversableElement $container = NULL) {
+    $this->assertSession()->fieldValueEquals(
+      $this->getFieldElementFromMap($fieldElement),
+      $value,
+      $container
     );
     return $this;
   }

@@ -14,15 +14,34 @@ class AboutUsPage extends PageObjectBase {
   /**
    * {@inheritdoc}
    */
-  protected $pageUrl = 'about-us.html';
+  public function getUrl() {
+    return 'about-us.html';
+  }
 
   /**
    * {@inheritdoc}
    */
-  protected $elementMap = [
-    'pageTitle' => 'h1',
-    'staffMembers' => '.staff-members',
-    'sam' => '.staff-member--sam',
-  ];
+  protected function getElementMap() {
+    return [
+      'pageTitle' => 'h1',
+      'staffMembers' => '.staff-members',
+      'staffMember' => '.staff-member',
+      'sam' => '.staff-member--sam',
+      'james' => '.staff-member--james',
+      'samProfileLink' => [
+        'named',
+        ['link', 'Visit profile'],
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getFieldElementMap() {
+    return [
+      'search' => 'edit-staff-search',
+    ];
+  }
 
 }
