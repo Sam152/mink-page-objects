@@ -3,9 +3,7 @@
 namespace PhpPageObjects\Proxy;
 
 /**
- * Interface PageDocumentElementProxyInterface
  *
- * @package PhpPageObjects\Proxy
  */
 interface PageDocumentElementProxyInterface {
 

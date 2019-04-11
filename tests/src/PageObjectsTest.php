@@ -4,6 +4,8 @@ namespace PhpPageObjects\Tests;
 
 use Behat\Mink\Driver\GoutteDriver;
 use Behat\Mink\Exception\ElementHtmlException;
+use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Exception\ElementTextException;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Session;
 use Behat\Mink\WebAssert;
@@ -99,10 +101,24 @@ class PageObjectsTest extends TestCase {
 
   /**
    * @covers ::has()
+   * @covers ::elementExists()
    */
-  public function testHas() {
+  public function testHasElementExists() {
     $this->assertTrue($this->about->has('@sam'));
     $this->assertFalse($this->about->has('@james'));
+
+    $this->about->elementExists('@sam');
+    $this->expectException(ElementNotFoundException::class);
+    $this->about->elementExists('@james');
+  }
+
+  /**
+   * @covers ::elementNotExists()
+   */
+  public function testElementNotExists() {
+    $this->about->elementNotExists('@james');
+    $this->expectException(ExpectationException::class);
+    $this->about->elementNotExists('@sam');
   }
 
   /**
@@ -113,10 +129,102 @@ class PageObjectsTest extends TestCase {
   }
 
   /**
-   * @covers ::findAll()
+   * @covers ::fieldValueEquals()
    */
   public function testFieldValueEquals() {
     $this->about->fieldValueEquals('@search', 'Search me');
+    $this->expectException(ExpectationException::class);
+    $this->about->fieldValueEquals('@search', 'Foo bar');
+  }
+
+  /**
+   * @covers ::fieldValueEquals()
+   */
+  public function testFieldValueNotEquals() {
+    $this->about->fieldValueNotEquals('@search', 'Foo bar');
+    $this->expectException(ExpectationException::class);
+    $this->about->fieldValueNotEquals('@search', 'Search me');
+  }
+
+  /**
+   * @covers ::elementTextContains()
+   */
+  public function testElementContainsText() {
+    $this->about->elementTextContains('@sam', 'Sam');
+    $this->expectException(ElementTextException::class);
+    $this->about->elementTextContains('@sam', 'Joe');
+  }
+
+  /**
+   * @covers ::elementTextContains()
+   */
+  public function testElementTextNotContains() {
+    $this->about->elementTextNotContains('@sam', 'Joe');
+    $this->expectException(ElementTextException::class);
+    $this->about->elementTextNotContains('@sam', 'Sam');
+  }
+
+  /**
+   * @covers ::elementAttributeExists()
+   */
+  public function testElementAttributeExists() {
+    $this->about->elementAttributeExists('@sam', 'data-real-name');
+    $this->expectException(ElementHtmlException::class);
+    $this->about->elementAttributeExists('@sam', 'data-foo');
+  }
+
+  /**
+   * @covers ::elementAttributeExists()
+   */
+  public function testElementAttributeContains() {
+    $this->about->elementAttributeContains('@sam', 'data-real-name', 'Sa');
+    $this->expectException(ElementHtmlException::class);
+    $this->about->elementAttributeContains('@sam', 'data-real-name', 'Foo');
+  }
+
+  /**
+   * @covers ::elementAttributeExists()
+   */
+  public function testElementAttributeNotContains() {
+    $this->about->elementAttributeNotContains('@sam', 'data-real-name', 'Foo');
+    $this->expectException(ElementHtmlException::class);
+    $this->about->elementAttributeNotContains('@sam', 'data-real-name', 'Sam');
+  }
+
+  /**
+   * @covers ::fieldExists()
+   */
+  public function testFieldExists() {
+    $this->about->fieldExists('@search');
+    $this->expectException(ElementNotFoundException::class);
+    $this->about->fieldExists('@invalidField');
+  }
+
+  /**
+   * @covers ::fieldExists()
+   */
+  public function testFieldNotExists() {
+    $this->about->fieldNotExists('@invalidField');
+    $this->expectException(ExpectationException::class);
+    $this->about->fieldNotExists('@search');
+  }
+
+  /**
+   * @covers ::checkboxChecked()
+   */
+  public function testCheckboxChecked() {
+    $this->about->checkboxChecked('@checkbox');
+    $this->expectException(ExpectationException::class);
+    $this->about->checkboxChecked('@checkboxOff');
+  }
+
+  /**
+   * @covers ::checkboxNotChecked()
+   */
+  public function testCheckboxNotChecked() {
+    $this->about->checkboxNotChecked('@checkboxOff');
+    $this->expectException(ExpectationException::class);
+    $this->about->checkboxNotChecked('@checkbox');
   }
 
 }

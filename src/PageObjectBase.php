@@ -225,4 +225,153 @@ abstract class PageObjectBase implements PageObjectInterface {
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function fieldValueNotEquals($fieldElement, $value, TraversableElement $container = NULL) {
+    $this->assertSession()->fieldValueNotEquals(
+      $this->getFieldElementFromMap($fieldElement),
+      $value,
+      $container
+    );
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementExists($pageElement, ElementInterface $container = NULL) {
+    $this->assertSession()->elementExists(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement),
+      $container
+    );
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementNotExists($pageElement, ElementInterface $container = NULL) {
+    $this->assertSession()->elementNotExists(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement),
+      $container
+    );
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementTextContains($pageElement, $text) {
+    $this->assertSession()->elementTextContains(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement),
+      $text
+    );
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementTextNotContains($pageElement, $text) {
+    $this->assertSession()->elementTextNotContains(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement),
+      $text
+    );
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementNotContains($pageElement, $html) {
+    $this->assertSession()->elementNotContains(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement),
+      $html
+    );
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementAttributeExists($pageElement, $attribute) {
+    return $this->assertSession()->elementAttributeExists(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement),
+      $attribute
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementAttributeContains($pageElement, $attribute, $text) {
+    $this->assertSession()->elementAttributeContains(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement),
+      $attribute,
+      $text
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementAttributeNotContains($pageElement, $attribute, $text) {
+    $this->assertSession()->elementAttributeNotContains(
+      $this->resolveElementLocator($pageElement),
+      $this->resolveElementSelector($pageElement),
+      $attribute,
+      $text
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fieldExists($fieldElement, TraversableElement $container = NULL) {
+    $this->assertSession()->fieldExists(
+      $this->getFieldElementFromMap($fieldElement),
+      $container
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fieldNotExists($fieldElement, TraversableElement $container = NULL) {
+    $this->assertSession()->fieldNotExists(
+      $this->getFieldElementFromMap($fieldElement),
+      $container
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkboxChecked($fieldElement, TraversableElement $container = NULL) {
+    $this->assertSession()->checkboxChecked(
+      $this->getFieldElementFromMap($fieldElement),
+      $container
+    );
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkboxNotChecked($fieldElement, TraversableElement $container = NULL) {
+    $this->assertSession()->checkboxNotChecked(
+      $this->getFieldElementFromMap($fieldElement),
+      $container
+    );
+    return $this;
+  }
+
 }

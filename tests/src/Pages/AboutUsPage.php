@@ -41,6 +41,9 @@ class AboutUsPage extends PageObjectBase {
   protected function getFieldElementMap() {
     return [
       'search' => 'edit-staff-search',
+      'invalidField' => 'foo-bar',
+      'checkbox' => 'test-checkbox',
+      'checkboxOff' => 'test-checkbox-off',
     ];
   }
 
