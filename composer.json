@@ -1,5 +1,5 @@
 {
-    "name": "sam152/php-page-objects",
+    "name": "sam152/mink-page-objects",
     "description": "Generic page objects for phpunit.",
     "type": "library",
     "authors": [
