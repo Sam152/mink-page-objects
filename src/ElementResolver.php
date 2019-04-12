@@ -60,11 +60,11 @@ class ElementResolver {
     return $this->resolveElement($key)[1];
   }
 
-  public function resolveNamedFieldElement($element) {
-    if ($this->resolveSelectorType($element) !== 'named') {
-      throw new \Exception(sprintf('Unable to resolve the "%s" element into a named selector.', $element));
+  public function resolveNamedFieldElement($key) {
+    if ($this->resolveSelectorType($key) !== 'named') {
+      throw new \Exception(sprintf('Unable to resolve the "%s" element into a named selector.', $key));
     }
-    $selector = $this->resolveSelector($element);
+    $selector = $this->resolveSelector($key);
     if (!is_array($selector) || count($selector) !== 2 || $selector[0] !== 'field') {
       throw new \Exception('Unable to resolve the element to named field selector.');
     }

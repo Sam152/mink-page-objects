@@ -258,6 +258,7 @@ abstract class PageObjectBase implements PageObjectInterface {
       $attribute,
       $text
     );
+    return $this;
   }
 
   /**
@@ -270,6 +271,7 @@ abstract class PageObjectBase implements PageObjectInterface {
       $attribute,
       $text
     );
+    return $this;
   }
 
   /**
@@ -280,6 +282,7 @@ abstract class PageObjectBase implements PageObjectInterface {
       $this->elementResolver->resolveNamedFieldElement($fieldElement),
       $container
     );
+    return $this;
   }
 
   /**
@@ -290,6 +293,7 @@ abstract class PageObjectBase implements PageObjectInterface {
       $this->elementResolver->resolveNamedFieldElement($fieldElement),
       $container
     );
+    return $this;
   }
 
   /**

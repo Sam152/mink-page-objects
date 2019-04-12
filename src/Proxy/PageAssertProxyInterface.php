@@ -5,9 +5,6 @@ namespace PhpPageObjects\Proxy;
 use Behat\Mink\Element\ElementInterface;
 use Behat\Mink\Element\TraversableElement;
 
-/**
- *
- */
 interface PageAssertProxyInterface {
 
   /**
