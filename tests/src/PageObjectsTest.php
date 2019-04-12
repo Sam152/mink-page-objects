@@ -91,7 +91,7 @@ class PageObjectsTest extends TestCase {
   }
 
   /**
-   * @covers ::getElementMap()
+   * @covers ::getElements()
    * @covers ::find()
    */
   public function testFindComplexElementMap() {
@@ -239,8 +239,9 @@ class PageObjectsTest extends TestCase {
    * Test you warned correctly for using elements in field-specific methods.
    */
   public function testFieldValueWithItemFromElementMap() {
-    $this->about->fieldValueNotEquals('@pageTitle', 'foo');
-    $this->expectExceptionMessage('You cannot use an element defined in ::getElementMap in a method that expects an item defined in ::getFieldElementMap.');
+    // This element is not defined in the named element map, but is explicitly
+    // declared as a named element so it can be used in field related methods.
+    $this->about->fieldValueNotEquals('@searchElement', 'foo');
   }
 
 }

@@ -24,9 +24,17 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   private $assert;
 
+  /**
+   * The element resolver.
+   *
+   * @var \PhpPageObjects\ElementResolver
+   */
+  protected $elementResolver;
+
   public function __construct(Session $session, WebAssert $assert) {
     $this->session = $session;
     $this->assert = $assert;
+    $this->elementResolver = new ElementResolver($this->getElements(), $this->getNamedFieldElements());
   }
 
   /**
@@ -40,7 +48,7 @@ abstract class PageObjectBase implements PageObjectInterface {
    * @return array
    *   An element map.
    */
-  protected function getElementMap() {
+  protected function getElements() {
     return [];
   }
 
@@ -50,7 +58,7 @@ abstract class PageObjectBase implements PageObjectInterface {
    * @return array
    *   A field element map.
    */
-  protected function getFieldElementMap() {
+  protected function getNamedFieldElements() {
     return [];
   }
 
@@ -91,80 +99,12 @@ abstract class PageObjectBase implements PageObjectInterface {
   }
 
   /**
-   * @param string $element
-   *   The element to resolve.
-   *
-   * @return mixed
-   *   The matching item from the element map.
-   */
-  private function getElementFromMap($element) {
-    if (substr($element, 0, 1) === '@') {
-      $element_map = $this->getElementMap();
-      $map_key = substr($element, 1);
-      if (!isset($element_map[$map_key])) {
-        throw new \InvalidArgumentException(sprintf('Could not find the element "%s" in the element map.', $element));
-      }
-      return $element_map[$map_key];
-    }
-    throw new \InvalidArgumentException(sprintf('Could not find the element "%s" in the element map.', $element));
-  }
-
-  /**
-   * Get a field element from the map.
-   *
-   * @param string $fieldElement
-   *   The element to resolve.
-   *
-   * @return mixed
-   *   The matching item from the element map.
-   */
-  private function getFieldElementFromMap($fieldElement) {
-    if (substr($fieldElement, 0, 1) === '@') {
-      $map = $this->getFieldElementMap();
-      $map_key = substr($fieldElement, 1);
-      if (!isset($map[$map_key])) {
-        throw new \InvalidArgumentException(sprintf('Could not find the field element "%s" in the element map.', $fieldElement));
-      }
-      return $map[$map_key];
-    }
-    throw new \InvalidArgumentException(sprintf('Could not find the field element "%s" in the element map.', $fieldElement));
-  }
-
-  /**
-   * Resolve an element into a selector.
-   *
-   * @param string $element
-   *   The page element.
-   *
-   * @return string
-   *   The associated selector.
-   */
-  protected function resolveElementSelector($element) {
-    $item = $this->getElementFromMap($element);
-    return is_array($item) ? $item[1] : $item;
-  }
-
-  /**
-   * Resolve an element into a locator.
-   *
-   * @param string $element
-   *   The page element.
-   *
-   * @return string
-   *   The associated locator.
-   */
-  protected function resolveElementLocator($element) {
-    $item = $this->getElementFromMap($element);
-    return is_array($item) ? $item[0] : static::LOCATOR_DEFAULT;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function has($pageElement) {
     return $this->getDocument()->has(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement)
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement)
     );
   }
 
@@ -173,8 +113,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function find($pageElement) {
     return $this->getDocument()->find(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement)
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement)
     );
   }
 
@@ -183,8 +123,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function findAll($pageElement) {
     return $this->getDocument()->findAll(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement)
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement)
     );
   }
 
@@ -193,8 +133,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function elementContains($pageElement, $html) {
     $this->assertSession()->elementContains(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement),
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement),
       $html
     );
     return $this;
@@ -205,8 +145,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function elementsCount($pageElement, $count, ElementInterface $container = NULL) {
     $this->assertSession()->elementsCount(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement),
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement),
       $count,
       $container
     );
@@ -218,7 +158,7 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function fieldValueEquals($fieldElement, $value, TraversableElement $container = NULL) {
     $this->assertSession()->fieldValueEquals(
-      $this->getFieldElementFromMap($fieldElement),
+      $this->elementResolver->resolveNamedFieldElement($fieldElement),
       $value,
       $container
     );
@@ -230,7 +170,7 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function fieldValueNotEquals($fieldElement, $value, TraversableElement $container = NULL) {
     $this->assertSession()->fieldValueNotEquals(
-      $this->getFieldElementFromMap($fieldElement),
+      $this->elementResolver->resolveNamedFieldElement($fieldElement),
       $value,
       $container
     );
@@ -242,8 +182,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function elementExists($pageElement, ElementInterface $container = NULL) {
     $this->assertSession()->elementExists(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement),
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement),
       $container
     );
     return $this;
@@ -254,8 +194,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function elementNotExists($pageElement, ElementInterface $container = NULL) {
     $this->assertSession()->elementNotExists(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement),
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement),
       $container
     );
     return $this;
@@ -266,8 +206,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function elementTextContains($pageElement, $text) {
     $this->assertSession()->elementTextContains(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement),
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement),
       $text
     );
     return $this;
@@ -278,8 +218,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function elementTextNotContains($pageElement, $text) {
     $this->assertSession()->elementTextNotContains(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement),
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement),
       $text
     );
     return $this;
@@ -290,8 +230,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function elementNotContains($pageElement, $html) {
     $this->assertSession()->elementNotContains(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement),
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement),
       $html
     );
     return $this;
@@ -302,8 +242,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function elementAttributeExists($pageElement, $attribute) {
     return $this->assertSession()->elementAttributeExists(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement),
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement),
       $attribute
     );
   }
@@ -313,8 +253,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function elementAttributeContains($pageElement, $attribute, $text) {
     $this->assertSession()->elementAttributeContains(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement),
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement),
       $attribute,
       $text
     );
@@ -325,8 +265,8 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function elementAttributeNotContains($pageElement, $attribute, $text) {
     $this->assertSession()->elementAttributeNotContains(
-      $this->resolveElementLocator($pageElement),
-      $this->resolveElementSelector($pageElement),
+      $this->elementResolver->resolveSelectorType($pageElement),
+      $this->elementResolver->resolveSelector($pageElement),
       $attribute,
       $text
     );
@@ -337,7 +277,7 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function fieldExists($fieldElement, TraversableElement $container = NULL) {
     $this->assertSession()->fieldExists(
-      $this->getFieldElementFromMap($fieldElement),
+      $this->elementResolver->resolveNamedFieldElement($fieldElement),
       $container
     );
   }
@@ -347,7 +287,7 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function fieldNotExists($fieldElement, TraversableElement $container = NULL) {
     $this->assertSession()->fieldNotExists(
-      $this->getFieldElementFromMap($fieldElement),
+      $this->elementResolver->resolveNamedFieldElement($fieldElement),
       $container
     );
   }
@@ -357,7 +297,7 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function checkboxChecked($fieldElement, TraversableElement $container = NULL) {
     $this->assertSession()->checkboxChecked(
-      $this->getFieldElementFromMap($fieldElement),
+      $this->elementResolver->resolveNamedFieldElement($fieldElement),
       $container
     );
     return $this;
@@ -368,7 +308,7 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function checkboxNotChecked($fieldElement, TraversableElement $container = NULL) {
     $this->assertSession()->checkboxNotChecked(
-      $this->getFieldElementFromMap($fieldElement),
+      $this->elementResolver->resolveNamedFieldElement($fieldElement),
       $container
     );
     return $this;

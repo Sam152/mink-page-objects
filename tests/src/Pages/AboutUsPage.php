@@ -21,7 +21,7 @@ class AboutUsPage extends PageObjectBase {
   /**
    * {@inheritdoc}
    */
-  protected function getElementMap() {
+  protected function getElements() {
     return [
       'pageTitle' => 'h1',
       'staffMembers' => '.staff-members',
@@ -32,13 +32,14 @@ class AboutUsPage extends PageObjectBase {
         'named',
         ['link', 'Visit profile'],
       ],
+      'searchElement' => ['named', ['field', 'edit-staff-search']],
     ];
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getFieldElementMap() {
+  protected function getNamedFieldElements() {
     return [
       'search' => 'edit-staff-search',
       'invalidField' => 'foo-bar',
