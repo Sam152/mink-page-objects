@@ -24,6 +24,7 @@ class LoginPage extends PageObjectBase {
     return [
       'resetPassword' => ['named', ['link', 'Reset password']],
       'passwordDescription' => '.edit-pass-description',
+      'messages' => '.messages',
     ];
   }
 
@@ -58,6 +59,13 @@ class LoginPage extends PageObjectBase {
     $this->find('@submit')->click();
   }
 
+  /**
+   * Assert the user was logged in successfully.
+   */
+  public function assertLoginSuccess() {
+    $this->elementContains('@messages', 'You were logged in successfully.');
+  }
+
 }
 
 /**
@@ -79,9 +87,9 @@ class LoginPageTest extends TestCase {
    * Test the login page.
    */
   public function testLoginPage() {
-    $page = new LoginPage($this->session, $this->assert);
-    $page->visit()->loginAs('test-user', 'test-password');
-    $this->assert->pageTextContains('You were logged in successfully.');
+    $loginPage = new LoginPage($this->session, $this->assert);
+    $loginPage->visit()->loginAs('test-user', 'test-password');
+    $loginPage->assertLoginSuccess();
   }
 
 }
