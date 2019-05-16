@@ -1,9 +1,9 @@
 <?php
 
-namespace PhpPageObjects;
+namespace MinkPageObjects;
 
-use PhpPageObjects\Proxy\PageAssertProxyInterface;
-use PhpPageObjects\Proxy\PageDocumentElementProxyInterface;
+use MinkPageObjects\Proxy\PageAssertProxyInterface;
+use MinkPageObjects\Proxy\PageDocumentElementProxyInterface;
 
 interface PageObjectInterface extends PageAssertProxyInterface, PageDocumentElementProxyInterface {
 

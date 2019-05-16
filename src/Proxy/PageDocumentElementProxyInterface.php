@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpPageObjects\Proxy;
+namespace MinkPageObjects\Proxy;
 
 /**
  *

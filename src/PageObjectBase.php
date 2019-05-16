@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpPageObjects;
+namespace MinkPageObjects;
 
 use Behat\Mink\Element\ElementInterface;
 use Behat\Mink\Element\TraversableElement;
@@ -27,7 +27,7 @@ abstract class PageObjectBase implements PageObjectInterface {
   /**
    * The element resolver.
    *
-   * @var \PhpPageObjects\ElementResolver
+   * @var \MinkPageObjects\ElementResolver
    */
   protected $elementResolver;
 

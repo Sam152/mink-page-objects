@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpPageObjects\Tests;
+namespace MinkPageObjects\Tests;
 
 use Goutte\Client;
 use Symfony\Component\BrowserKit\Response;

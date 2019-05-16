@@ -13,8 +13,8 @@
     },
     "autoload": {
         "psr-4": {
-            "PhpPageObjects\\": "src/",
-            "PhpPageObjects\\Tests\\": "tests/src"
+            "MinkPageObjects\\": "src/",
+            "MinkPageObjects\\Tests\\": "tests/src"
         }
     },
     "require-dev": {

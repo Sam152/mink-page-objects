@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpPageObjects;
+namespace MinkPageObjects;
 
 /**
  * The ElementResolver class.

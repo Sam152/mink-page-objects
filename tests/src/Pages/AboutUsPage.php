@@ -1,8 +1,8 @@
 <?php
 
-namespace PhpPageObjects\Tests\Pages;
+namespace MinkPageObjects\Tests\Pages;
 
-use PhpPageObjects\PageObjectBase;
+use MinkPageObjects\PageObjectBase;
 
 /**
  * A simple example of a page object for an about page.

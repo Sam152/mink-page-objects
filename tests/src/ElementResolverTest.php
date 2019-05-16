@@ -1,14 +1,14 @@
 <?php
 
-namespace PhpPageObjects\Tests;
+namespace MinkPageObjects\Tests;
 
-use PhpPageObjects\ElementResolver;
+use MinkPageObjects\ElementResolver;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test the element resolver.
  *
- * @coversDefaultClass \PhpPageObjects\ElementResolver
+ * @coversDefaultClass \MinkPageObjects\ElementResolver
  */
 class ElementResolverTest extends TestCase {
   /**

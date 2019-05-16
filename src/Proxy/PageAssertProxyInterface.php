@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpPageObjects\Proxy;
+namespace MinkPageObjects\Proxy;
 
 use Behat\Mink\Element\ElementInterface;
 use Behat\Mink\Element\TraversableElement;

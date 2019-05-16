@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpPageObjects\Tests;
+namespace MinkPageObjects\Tests;
 
 use Behat\Mink\Driver\GoutteDriver;
 use Behat\Mink\Exception\ElementHtmlException;
@@ -9,13 +9,13 @@ use Behat\Mink\Exception\ElementTextException;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Session;
 use Behat\Mink\WebAssert;
-use PhpPageObjects\Tests\Pages\AboutUsPage;
+use MinkPageObjects\Tests\Pages\AboutUsPage;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test the integration of page objects.
  *
- * @coversDefaultClass \PhpPageObjects\PageObjectBase
+ * @coversDefaultClass \MinkPageObjects\PageObjectBase
  */
 class PageObjectsTest extends TestCase {
 
@@ -37,7 +37,7 @@ class PageObjectsTest extends TestCase {
   /**
    * The test about us page.
    *
-   * @var \PhpPageObjects\Tests\Pages\AboutUsPage
+   * @var \MinkPageObjects\Tests\Pages\AboutUsPage
    */
   protected $about;
 
