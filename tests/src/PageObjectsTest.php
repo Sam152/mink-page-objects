@@ -46,7 +46,8 @@ class PageObjectsTest extends TestCase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->driver = new GoutteDriver();
+
+    $this->driver = new GoutteDriver(new FileSystemGoutteClient());
     $this->session = new Session($this->driver);
     $this->assert = new WebAssert($this->session);
     $this->session->start();
