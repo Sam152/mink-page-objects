@@ -67,6 +67,7 @@ abstract class PageObjectBase implements PageObjectInterface {
    */
   public function visit() {
     $this->getSession()->visit($this->getUrl());
+    return $this;
   }
 
   /**

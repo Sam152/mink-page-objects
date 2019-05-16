@@ -68,7 +68,8 @@ class PageObjectsTest extends TestCase {
    * @covers ::visit()
    */
   public function testVisit() {
-    $this->about->visit();
+    $page = $this->about->visit();
+    $this->assertEquals($page, $this->about);
     $this->assertRegExp(sprintf('/%s$/', $this->about->getUrl()), $this->session->getCurrentUrl());
   }
 
