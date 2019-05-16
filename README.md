@@ -13,8 +13,15 @@ surface on top of the existing Mink API as possible. The selector and form
 field list is inspired by 
 [nightwatch.js](https://nightwatchjs.org/guide#working-with-page-objects).
 
-By implementing page objects, you can create tests that are easier to read
-and maintain.
+By implementing page objects:
+
+  * You create tests that are easier to read and maintain.
+  * You reduce coupling between test cases and markup.
+  * You encourage thorough testing by making the whole process easier.
+
+Further reading on the benefits of page objects can be found on [Martin
+Fowler's blog post](https://martinfowler.com/bliki/PageObject.html) on
+the subject.
 
 Here is an example of a page object you might define with this library for
 a login page:
